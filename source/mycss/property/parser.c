@@ -2728,12 +2728,60 @@ bool mycss_property_parser_align_content(mycss_entry_t* entry, mycss_token_t* to
 
 bool mycss_property_parser_align_items(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
 {
-    return mycss_property_shared_switch_to_parse_error(entry);
+    if(token->type == MyCSS_TOKEN_TYPE_WHITESPACE)
+        return true;
+    
+    mycore_string_t str = {0};
+    mycss_declaration_entry_t* dec_entry = entry->declaration->entry_last;
+    
+    if(token->type != MyCSS_TOKEN_TYPE_IDENT)
+        return mycss_property_shared_switch_to_parse_error(entry);
+    
+    mycss_token_data_to_string(entry, token, &str, true, false);
+    dec_entry->value_type = mycss_property_value_type_by_name(str.data, str.length);
+    
+    switch (dec_entry->value_type) {
+        case MyCSS_PROPERTY_ALIGN_ITEMS_CENTER:
+        case MyCSS_PROPERTY_ALIGN_ITEMS_FLEX_END:
+        case MyCSS_PROPERTY_ALIGN_ITEMS_FLEX_START:
+        case MyCSS_PROPERTY_ALIGN_ITEMS_STRETCH:
+        case MyCSS_PROPERTY_ALIGN_ITEMS_BASELINE:
+            return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_find_important(entry));
+            
+        default:
+            break;
+    }
+    
+    return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_parse_error(entry));
 }
 
 bool mycss_property_parser_align_self(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
 {
-    return mycss_property_shared_switch_to_parse_error(entry);
+    if(token->type == MyCSS_TOKEN_TYPE_WHITESPACE)
+        return true;
+    
+    mycore_string_t str = {0};
+    mycss_declaration_entry_t* dec_entry = entry->declaration->entry_last;
+    
+    if(token->type != MyCSS_TOKEN_TYPE_IDENT)
+        return mycss_property_shared_switch_to_parse_error(entry);
+    
+    mycss_token_data_to_string(entry, token, &str, true, false);
+    dec_entry->value_type = mycss_property_value_type_by_name(str.data, str.length);
+    
+    switch (dec_entry->value_type) {
+        case MyCSS_PROPERTY_ALIGN_SELF_CENTER:
+        case MyCSS_PROPERTY_ALIGN_SELF_FLEX_END:
+        case MyCSS_PROPERTY_ALIGN_SELF_FLEX_START:
+        case MyCSS_PROPERTY_ALIGN_SELF_STRETCH:
+        case MyCSS_PROPERTY_ALIGN_SELF_BASELINE:
+            return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_find_important(entry));
+            
+        default:
+            break;
+    }
+    
+    return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_parse_error(entry));
 }
 
 bool mycss_property_parser_animation(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
@@ -3018,17 +3066,51 @@ bool mycss_property_parser_fill_rule(mycss_entry_t* entry, mycss_token_t* token,
 
 bool mycss_property_parser_flex(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
 {
-    return mycss_property_shared_switch_to_parse_error(entry);
+    mycore_string_t str = {0};
+    mycss_declaration_entry_t* dec_entry = entry->declaration->entry_last;
+    if(mycss_property_shared_length_percentage(entry, token, &dec_entry->value, &dec_entry->value_type, &str)) {
+        return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_find_important(entry));
+    }
+
+    return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_parse_error(entry));
 }
 
 bool mycss_property_parser_flex_basis(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
 {
-    return mycss_property_shared_switch_to_parse_error(entry);
+    mycore_string_t str = {0};
+    mycss_declaration_entry_t* dec_entry = entry->declaration->entry_last;
+    if(mycss_property_shared_length_percentage(entry, token, &dec_entry->value, &dec_entry->value_type, &str))
+        return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_find_important(entry));
+
+    return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_parse_error(entry));
 }
 
 bool mycss_property_parser_flex_direction(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
 {
-    return mycss_property_shared_switch_to_parse_error(entry);
+    if(token->type == MyCSS_TOKEN_TYPE_WHITESPACE)
+        return true;
+    
+    mycore_string_t str = {0};
+    mycss_declaration_entry_t* dec_entry = entry->declaration->entry_last;
+    
+    if(token->type != MyCSS_TOKEN_TYPE_IDENT)
+        return mycss_property_shared_switch_to_parse_error(entry);
+    
+    mycss_token_data_to_string(entry, token, &str, true, false);
+    dec_entry->value_type = mycss_property_value_type_by_name(str.data, str.length);
+    
+    switch (dec_entry->value_type) {
+        case MyCSS_PROPERTY_FLEX_DIRECTION_COLUMN:
+        case MyCSS_PROPERTY_FLEX_DIRECTION_ROW:
+        case MyCSS_PROPERTY_FLEX_DIRECTION_ROW_REVERSE:
+        case MyCSS_PROPERTY_FLEX_DIRECTION_COLUMN_REVERSE:
+            return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_find_important(entry));
+            
+        default:
+            break;
+    }
+    
+    return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_parse_error(entry));
 }
 
 bool mycss_property_parser_flex_flow(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
@@ -3038,17 +3120,49 @@ bool mycss_property_parser_flex_flow(mycss_entry_t* entry, mycss_token_t* token,
 
 bool mycss_property_parser_flex_grow(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
 {
-    return mycss_property_shared_switch_to_parse_error(entry);
+    mycore_string_t str = {0};
+    mycss_declaration_entry_t* dec_entry = entry->declaration->entry_last;
+    if(mycss_property_shared_length_percentage(entry, token, &dec_entry->value, &dec_entry->value_type, &str))
+        return true;
+
+    return false;
 }
 
 bool mycss_property_parser_flex_shrink(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
 {
-    return mycss_property_shared_switch_to_parse_error(entry);
+    mycore_string_t str = {0};
+    mycss_declaration_entry_t* dec_entry = entry->declaration->entry_last;
+    if(mycss_property_shared_length_percentage(entry, token, &dec_entry->value, &dec_entry->value_type, &str))
+        return true;
+
+    return false;
 }
 
 bool mycss_property_parser_flex_wrap(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
 {
-    return mycss_property_shared_switch_to_parse_error(entry);
+    if(token->type == MyCSS_TOKEN_TYPE_WHITESPACE)
+        return true;
+    
+    mycore_string_t str = {0};
+    mycss_declaration_entry_t* dec_entry = entry->declaration->entry_last;
+    
+    if(token->type != MyCSS_TOKEN_TYPE_IDENT)
+        return mycss_property_shared_switch_to_parse_error(entry);
+    
+    mycss_token_data_to_string(entry, token, &str, true, false);
+    dec_entry->value_type = mycss_property_value_type_by_name(str.data, str.length);
+    
+    switch (dec_entry->value_type) {
+        case MyCSS_PROPERTY_FLEX_WRAP_WRAP_REVERSE:
+        case MyCSS_PROPERTY_FLEX_WRAP_WRAP:
+        case MyCSS_PROPERTY_FLEX_WRAP_NOWRAP:
+            return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_find_important(entry));
+            
+        default:
+            break;
+    }
+    
+    return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_parse_error(entry));
 }
 
 bool mycss_property_parser_font_feature_settings(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
