@@ -66,7 +66,7 @@ static mycss_declaration_serialization_f mycss_declaration_serialization_map_by_
 	mycss_declaration_serialization_shorthand_two_type,
 	mycss_declaration_serialization_undef,
 	mycss_declaration_serialization_undef,
-	mycss_declaration_serialization_undef,
+	mycss_declaration_serialization_border_image,
 	mycss_declaration_serialization_shorthand_four,
 	mycss_declaration_serialization_undef,
 	mycss_declaration_serialization_undef,

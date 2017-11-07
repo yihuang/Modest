@@ -14,4 +14,5 @@ file(GLOB MODEST_SRC
     ./source/modest/*/*.c
 )
 
+include_directories(./include)
 add_library(modest ${MODEST_SRC})

@@ -456,6 +456,8 @@ struct mycss_values_border {
     mycss_declaration_entry_t* width;
     mycss_declaration_entry_t* style;
     mycss_declaration_entry_t* color;
+    mycore_string_t* image;
+    mycss_values_shorthand_two_t image_size;
 };
 
 /*

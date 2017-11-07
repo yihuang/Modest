@@ -2861,7 +2861,60 @@ bool mycss_property_parser_border_collapse(mycss_entry_t* entry, mycss_token_t* 
 
 bool mycss_property_parser_border_image(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
 {
-    return mycss_property_shared_switch_to_parse_error(entry);
+    if(token->type == MyCSS_TOKEN_TYPE_WHITESPACE)
+        return true;
+
+    mycss_declaration_entry_t* dec_entry = entry->declaration->entry_last;
+    if(dec_entry->value == NULL) {
+        dec_entry->value = mycss_values_create(entry, sizeof(mycss_values_border_t));
+    }
+    mycss_values_border_t *border = dec_entry->value;
+ 
+    if(mycss_property_shared_check_declaration_end(entry, token)) {
+        if(border->image.data == NULL)
+            return mycss_property_shared_switch_to_parse_error(entry);
+        return true;
+    }
+
+    mycore_string_t str = {0};
+    unsigned int value_type;
+    void* value;
+    if (border->image_size.one == NULL && mycss_property_shared_width(entry, token, &value, &value_type, &str)) {
+        border->image_size.one = mycss_declaration_entry_create(entry->declaration, NULL);
+        border->image_size.one->value = value;
+        border->image_size.one->value_type = value_type;
+        return mycss_property_parser_destroy_string(&str, true);
+    }
+    else if (border->image_size.two == NULL && mycss_property_shared_width(entry, token, &value, &value_type, &str)) {
+        border->image_size.two = mycss_declaration_entry_create(entry->declaration, NULL);
+        border->image_size.two->value = value;
+        border->image_size.two->value_type = value_type;
+        return mycss_property_parser_destroy_string(&str, true);
+    }
+    else {
+        if (!str.data) {
+            mycss_token_data_to_string(entry, token, &str, true, false);
+        }
+        mycss_property_border_image_repeat_t type = mycss_property_value_type_by_name(str.data, str.length);
+        switch (type) {
+            case MyCSS_PROPERTY_BORDER_IMAGE_REPEAT_ROUND:
+                break;
+            case MyCSS_PROPERTY_BORDER_IMAGE_REPEAT_REPEAT:
+                break;
+            case MyCSS_PROPERTY_BORDER_IMAGE_REPEAT_STRETCH:
+                break;
+            case MyCSS_PROPERTY_BORDER_IMAGE_REPEAT_SPACE:
+                break;
+            default:
+                if (!border->image.data) {
+                    mycore_string_init(entry->mchar, entry->mchar_node_id, &border->image, str.length);
+                    mycore_string_copy(&border->image, &str);
+                }
+                break;
+        }
+        return mycss_property_parser_destroy_string(&str, true);
+    }
+    return true;
 }
 
 bool mycss_property_parser_border_image_outset(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
