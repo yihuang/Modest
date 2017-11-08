@@ -70,6 +70,7 @@ typedef struct mycss_values_background mycss_values_background_t;
 typedef struct mycss_values_background_list mycss_values_background_list_t;
 
 typedef struct mycss_values_border mycss_values_border_t;
+typedef struct mycss_values_border_slice mycss_values_border_slice_t;
 
 typedef struct mycss_values_color_stop mycss_values_color_stop_t;
 typedef struct mycss_values_color_stop_list mycss_values_color_stop_list_t;
@@ -458,6 +459,11 @@ struct mycss_values_border {
     mycss_declaration_entry_t* color;
     mycore_string_t image;
     mycss_values_shorthand_two_t image_size;
+};
+
+struct mycss_values_border_slice {
+    mycss_values_shorthand_four_t slice;
+    bool fill;
 };
 
 /*

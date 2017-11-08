@@ -2929,7 +2929,66 @@ bool mycss_property_parser_border_image_repeat(mycss_entry_t* entry, mycss_token
 
 bool mycss_property_parser_border_image_slice(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
 {
-    return mycss_property_shared_switch_to_parse_error(entry);
+    if(token->type == MyCSS_TOKEN_TYPE_WHITESPACE)
+        return true;
+    
+    mycss_declaration_entry_t* dec_entry = entry->declaration->entry_last;
+    
+    if(dec_entry->value == NULL) {
+        dec_entry->value = mycss_values_create(entry, sizeof(mycss_values_border_slice_t));
+    }
+    
+    mycss_values_border_slice_t *value = dec_entry->value;
+    
+    if(mycss_property_shared_check_declaration_end(entry, token))
+    {
+        if(value->slice.one == NULL)
+            return mycss_property_shared_switch_to_parse_error(entry);
+        
+        return true;
+    }
+    
+    mycore_string_t str = {0};
+    
+    if(value->slice.one == NULL)
+    {
+        if((value->slice.one = mycss_property_parser_padding_shared(entry, token, &str))) {
+            value->slice.one->type = MyCSS_PROPERTY_TYPE_PADDING_TOP;
+            return mycss_property_parser_destroy_string(&str, true);
+        }
+    }
+    else if(value->slice.two == NULL)
+    {
+        if((value->slice.two = mycss_property_parser_padding_shared(entry, token, &str))) {
+            value->slice.two->type = MyCSS_PROPERTY_TYPE_PADDING_RIGHT;
+            return mycss_property_parser_destroy_string(&str, true);
+        }
+    }
+    else if(value->slice.three == NULL)
+    {
+        if((value->slice.three = mycss_property_parser_padding_shared(entry, token, &str))) {
+            value->slice.three->type = MyCSS_PROPERTY_TYPE_PADDING_BOTTOM;
+            return mycss_property_parser_destroy_string(&str, true);
+        }
+    }
+    else if(value->slice.four == NULL)
+    {
+        if((value->slice.four = mycss_property_parser_padding_shared(entry, token, &str))) {
+            value->slice.four->type = MyCSS_PROPERTY_TYPE_PADDING_LEFT;
+            return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_find_important(entry));
+        }
+    }
+
+    if (str.data == NULL) {
+        mycss_token_data_to_string(entry, token, &str, true, false);
+    }
+    int type = mycss_property_value_type_by_name(str.data, str.length);
+    if (type == MyCSS_PROPERTY_BORDER_IMAGE_SLICE_FILL) {
+        value->fill = true;
+        return mycss_property_parser_destroy_string(&str, true);
+    }
+    
+    return mycss_property_parser_destroy_string(&str, mycss_property_shared_switch_to_parse_error(entry));
 }
 
 bool mycss_property_parser_border_image_width(mycss_entry_t* entry, mycss_token_t* token, bool last_response)
